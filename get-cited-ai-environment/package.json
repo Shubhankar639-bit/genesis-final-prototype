@@ -1,0 +1,22 @@
+{
+  "name": "get-cited-ai-environment",
+  "type": "module",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Static GEO prototype: environmental architecture of generative AI.",
+  "engines": {
+    "node": ">=18.14.1"
+  },
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "validate": "node scripts/validate-geo.mjs",
+    "check": "npm run build && npm run validate"
+  },
+  "dependencies": {
+    "@astrojs/tailwind": "^5.1.4",
+    "astro": "^4.16.18",
+    "tailwindcss": "^3.4.17"
+  }
+}
