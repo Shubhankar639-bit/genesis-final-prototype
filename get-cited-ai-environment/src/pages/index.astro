@@ -7,7 +7,7 @@ const headline = 'The Environmental Architecture of Generative AI: Carbon and Wa
 const h1 = `${headline}.`;
 const description =
   'An evidence-first overview of published estimates for the water and carbon footprint of training and running generative AI, with uncertainty, system boundaries, and original sources.';
-const canonical = new URL('/', Astro.site ?? 'https://example.com').href;
+const canonical = new URL('/', Astro.site!).href;
 
 const articleLd = {
   '@context': 'https://schema.org',
@@ -18,8 +18,13 @@ const articleLd = {
   dateModified: SITE.reviewed,
   inLanguage: 'en',
   mainEntityOfPage: canonical,
-  author: { '@type': 'Organization', name: SITE.name },
-  publisher: { '@type': 'Organization', name: SITE.name },
+  '@id': `${canonical}#article`,
+  url: canonical,
+  image: new URL('/social-preview.png', Astro.site!).href,
+  author: { '@type': 'Organization', name: 'Get Cited project', url: new URL('/about/', Astro.site!).href },
+  publisher: { '@type': 'Organization', name: 'Get Cited project', url: new URL('/about/', Astro.site!).href },
+  citation: Object.values(SOURCES).map(s => s.url),
+  articleSection: ['Training water', 'Training carbon', 'Cooling', 'SDG 6.6', 'Resource comparison'],
 };
 
 const faqLd = {
@@ -37,14 +42,14 @@ const sourceEntries = Object.entries(SOURCES);
 
 <Layout title={headline} description={description} jsonLd={[articleLd, faqLd]}>
   <header class="border-b border-slate-200 bg-white">
-    <div class="mx-auto max-w-4xl px-5 py-12 sm:py-16">
+    <div class="mx-auto max-w-4xl px-5 py-8 sm:py-10">
       <p class="text-sm font-semibold uppercase tracking-wide text-blue-800">Get Cited · Genesis evidence-first explainer</p>
 
       <h1 class="mt-3 text-3xl font-bold leading-tight text-slate-900 sm:text-4xl">{h1}</h1>
 
       <p class="mt-5 text-lg leading-relaxed text-slate-700">
-        This page summarizes published estimates of the water and carbon footprint of training and running generative AI.
-        It separates measured or modelled figures from gaps in the evidence.
+        Generative AI uses electricity for computation and may consume water for cooling and power generation.
+        This evidence review separates GPT-3 training estimates from inference measurements, explains their boundaries, and compares cooling choices. No single footprint describes every model, prompt, or location.
       </p>
 
       <div class="mt-8 rounded-lg border border-slate-200 bg-slate-50 p-6">
@@ -68,13 +73,15 @@ const sourceEntries = Object.entries(SOURCES);
         </p>
       </div>
 
+      <p class="mt-5 text-sm text-slate-600">Published by <a class="underline" href="/about/">Get Cited project</a> · Maintained in public by <a class="underline" href="https://github.com/Shubhankar639-bit">Shubhankar639-bit</a>. Research synthesis; no independent expert review is claimed.</p>
+
       <dl class="mt-8 grid gap-4 text-sm sm:grid-cols-2">
         <div>
           <dt class="font-medium text-slate-600">Publication date</dt>
           <dd><time datetime={SITE.published}>14 October 2026</time></dd>
         </div>
         <div>
-          <dt class="font-medium text-slate-600">Last reviewed</dt>
+          <dt class="font-medium text-slate-600">Sources last checked</dt>
           <dd><time datetime={SITE.reviewed}>14 October 2026</time></dd>
         </div>
       </dl>
@@ -101,7 +108,7 @@ const sourceEntries = Object.entries(SOURCES);
   <main id="main-content" class="mx-auto max-w-4xl px-5 pb-20">
     <!-- SECTION A -->
     <section id="section-a-training-water" class="pt-14">
-      <h2 class="scroll-mt-8 text-2xl font-bold text-slate-900 sm:text-3xl">Section A: How much water does training an LLM consume?</h2>
+      <h2 class="scroll-mt-8 text-2xl font-bold text-slate-900 sm:text-3xl">How much water does training an LLM consume?</h2>
       <p class="mt-4 text-lg leading-relaxed text-slate-800">
         There is no single figure for every model. One widely cited academic estimate attributes roughly 700,000 litres of
         freshwater to training GPT-3 in Microsoft's US data centres, mostly for cooling (<a class="text-blue-800 underline" href={SOURCES.li2023.url}>Li et al., 2023</a>).
@@ -147,7 +154,7 @@ const sourceEntries = Object.entries(SOURCES);
 
     <!-- SECTION B -->
     <section id="section-b-training-carbon" class="pt-14">
-      <h2 class="scroll-mt-8 text-2xl font-bold text-slate-900 sm:text-3xl">Section B: What is the carbon footprint of AI model training?</h2>
+      <h2 class="scroll-mt-8 text-2xl font-bold text-slate-900 sm:text-3xl">What is the carbon footprint of AI model training?</h2>
       <p class="mt-4 text-lg leading-relaxed text-slate-800">
         Training a large model consumes substantial electricity, and resulting emissions depend on the grid that powers it.
         For GPT-3, a 2021 analysis estimated about 1,287 MWh of electricity and roughly 552 tonnes of CO2-equivalent (<a class="text-blue-800 underline" href={SOURCES.patterson2021.url}>Patterson et al., 2021</a>).
@@ -219,18 +226,16 @@ const sourceEntries = Object.entries(SOURCES);
 
       <!-- SECTION C -->
       <div class="mt-12">
-        <h3 id="section-c-cooling-methods" class="scroll-mt-8 text-xl font-bold text-slate-900 sm:text-2xl">Section C: Evaporative Cooling and Greywater Recycling Methods</h3>
+        <h3 id="section-c-cooling-methods" class="scroll-mt-8 text-xl font-bold text-slate-900 sm:text-2xl">Evaporative Cooling and Greywater Recycling Methods</h3>
         <p class="mt-4 text-slate-800">
-          Evaporative cooling uses water to remove heat and is usually the most water-intensive option, while air cooling uses more electricity and little water.
-          Reclaimed water and closed-loop systems reduce freshwater withdrawal, but add treatment, pumping, or energy costs.
-          The right choice depends on local water availability, climate, and electricity prices.
+          Evaporative cooling consumes water while rejecting heat; air cooling generally trades lower direct water use for higher electricity demand. Reclaimed water can replace freshwater where quality and infrastructure permit. Closed-loop circulation still needs heat rejection, maintenance, and sometimes make-up water. Local climate, water stress, and system design determine the trade-offs (<a href={SOURCES.doeCooling.url}>US DOE</a>; <a href={SOURCES.elsworth2025.url}>Elsworth et al.</a>).
         </p>
 
         <p class="mt-6 text-sm text-slate-700">
           The table compares four approaches qualitatively. Published figures for these methods use incompatible boundaries, so no numeric values are shown.
         </p>
 
-        <div class="mt-4 overflow-x-auto rounded-lg border border-slate-200">
+        <div class="table-scroll mt-4 overflow-x-auto rounded-lg border border-slate-200" role="region" aria-label="Cooling methods table; scroll horizontally on small screens" tabindex="0">
           <table id="cooling-comparison-table" class="min-w-full border-collapse text-left text-sm">
             <caption class="px-4 py-3 text-left text-sm font-medium text-slate-700">
               Qualitative comparison of cooling and water-reuse methods (trade-offs, not measured values).
@@ -280,15 +285,15 @@ const sourceEntries = Object.entries(SOURCES);
 
       <!-- SECTION D -->
       <div class="mt-14">
-        <h3 id="section-d-hardware-sdg6" class="scroll-mt-8 text-xl font-bold text-slate-900 sm:text-2xl">Section D: AI Hardware Demands and Sustainable Development Goal 6 Target 6.6</h3>
+        <h3 id="section-d-hardware-sdg6" class="scroll-mt-8 text-xl font-bold text-slate-900 sm:text-2xl">AI Hardware Demands and Sustainable Development Goal 6 Target 6.6</h3>
         <p class="mt-4 text-slate-800">
           AI data centres can affect freshwater ecosystems through water withdrawal from rivers and aquifers, thermal discharge, and use in water-stressed basins.
           Evaluating this against SDG 6 Target 6.6 requires local measurements of water-related ecosystems, not only corporate totals.
-          Impacts depend strongly on siting and local water scarcity.
+          These are potential pathways, not documented damage at every facility (<a class="underline" href={SOURCES.unSdg6.url}>UN SDG 6</a>; <a class="underline" href={SOURCES.li2023.url}>Li et al.</a>).
         </p>
 
         <p class="mt-6 text-slate-800">
-          Target 6.6 calls for protecting and restoring water-related ecosystems such as wetlands, rivers, aquifers, and lakes (<a class="text-blue-800 underline" href={SOURCES.unSdg6.url}>UN SDG 6</a>).
+          Target 6.6 set a 2020 deadline to protect and restore water-related ecosystems, including mountains, forests, wetlands, rivers, aquifers, and lakes (<a class="text-blue-800 underline" href={SOURCES.unSdg6.url}>UN SDG 6</a>).
           Its official indicator, 6.6.1, tracks change in the extent of these ecosystems over time (<a class="text-blue-800 underline" href={SOURCES.unIndicator661.url}>UN SDG indicator 6.6.1</a>).
           Progress is therefore assessed through the indicator rather than through corporate water totals.
         </p>
@@ -306,12 +311,10 @@ const sourceEntries = Object.entries(SOURCES);
     <section id="section-e-resource-comparison" class="pt-14">
       <h2 class="scroll-mt-8 text-2xl font-bold text-slate-900 sm:text-3xl">Section E: Resource consumption comparison</h2>
       <p class="mt-4 text-lg leading-relaxed text-slate-800">
-        Per-query and training figures for web search, text generation, and image generation are not directly comparable.
-        Reliable, consistent energy and water measurements for all three tasks under one boundary are unavailable, so most cells are marked Not established.
-        Where a figure appears, read it with the assumptions stated in its row.
+        Resource use differs across search, text generation, and image generation. The table separates published inference results by workload and boundary; its rows are not a controlled comparison. Training totals are excluded. Where the reviewed sources do not establish a value, the table says Not established rather than inserting a generic estimate.
       </p>
 
-      <div class="mt-8 overflow-x-auto rounded-lg border border-slate-200">
+      <div class="table-scroll mt-8 overflow-x-auto rounded-lg border border-slate-200" role="region" aria-label="Resource comparison table; scroll horizontally on small screens" tabindex="0">
         <table id="resource-comparison-table" class="min-w-full border-collapse text-left text-sm">
           <caption class="px-4 py-3 text-left text-sm font-medium text-slate-700">
             Per-query task measurements. These are not training totals (Sections A and B) and must not be added to or compared directly with them.
@@ -339,22 +342,22 @@ const sourceEntries = Object.entries(SOURCES);
             <tr>
               <th scope="row" class="px-4 py-3 text-left">
                 <span class="font-semibold text-slate-900">Generative text</span><br />
-                <span class="font-normal">A single text prompt. Model, prompt length, and output length vary by study.</span>
+                <span class="font-normal">Median Gemini Apps text prompt, May 2025; vendor study, not a universal LLM value.</span>
               </th>
-              <td class="px-4 py-3">Not established. Vendor-reported figures exist for one model but are not independently verified or comparable.</td>
-              <td class="px-4 py-3">Not established. Same limitation as energy.</td>
-              <td class="px-4 py-3">Vendor-defined; differs from academic boundaries.</td>
-              <td class="px-4 py-3"><a class="text-blue-800 underline" href={SOURCES.elsworth2025.url}>Elsworth et al., 2025</a> (vendor preprint; verify figures before use)</td>
+              <td class="px-4 py-3">0.00024 kWh/prompt (0.24 Wh ÷ 1,000), vendor-reported (<a href={SOURCES.elsworth2025.url}>Elsworth et al., Table 2</a>).</td>
+              <td class="px-4 py-3">0.26 mL/prompt, calculated using cooling-water intensity (<a href={SOURCES.elsworth2025.url}>Elsworth et al., Table 2</a>).</td>
+              <td class="px-4 py-3">Serving energy includes accelerators, hosts, idle capacity, and facility overhead. Water covers data-centre cooling, not upstream electricity water.</td>
+              <td class="px-4 py-3"><a class="text-blue-800 underline" href={SOURCES.elsworth2025.url}>Elsworth et al., 2025</a> (vendor preprint; measured energy and modeled water, not an independent replication)</td>
             </tr>
             <tr>
               <th scope="row" class="px-4 py-3 text-left">
                 <span class="font-semibold text-slate-900">Image generation</span><br />
-                <span class="font-normal">A single image. Model, resolution, and sampling steps vary.</span>
+                <span class="font-normal">Image-generation task benchmark; mean over tested models, not every image service.</span>
               </th>
-              <td class="px-4 py-3">Not established in this prototype. A consistent per-task comparison exists; values have not been transcribed.</td>
+              <td class="px-4 py-3">0.002907 kWh/image (2.907 kWh per 1,000 ÷ 1,000), benchmark mean (<a href={SOURCES.luccioni2024.url}>Luccioni et al., Table 2</a>).</td>
               <td class="px-4 py-3">Not established. Water is not reported in this source.</td>
-              <td class="px-4 py-3">Not established in this prototype.</td>
-              <td class="px-4 py-3"><a class="text-blue-800 underline" href={SOURCES.luccioni2024.url}>Luccioni et al., 2024</a> (per-task energy comparison; verify values before use)</td>
+              <td class="px-4 py-3">Hardware-level inference benchmark; excludes a full facility or lifecycle inventory. Models and settings vary.</td>
+              <td class="px-4 py-3"><a class="text-blue-800 underline" href={SOURCES.luccioni2024.url}>Luccioni et al., 2024</a> (Table 2; substantial variation across models; energy only)</td>
             </tr>
           </tbody>
         </table>
@@ -396,6 +399,7 @@ const sourceEntries = Object.entries(SOURCES);
               <span class="font-semibold text-slate-900">{s.title}.</span>
               {s.authors ? <span> {s.authors}.</span> : null}
               <span> {s.publisher}. Date: {s.date}. Type: {s.kind}.</span>
+              <span class="mt-1 block">Supports: {s.supports}</span>
               <br />
               <a class="break-all text-blue-800 underline" href={s.url}>{s.url}</a>
             </li>
@@ -410,8 +414,12 @@ const sourceEntries = Object.entries(SOURCES);
           <li><strong>System boundaries:</strong> each figure states what it includes. Training totals, per-query measurements, and hardware manufacturing are not additive or interchangeable.</li>
           <li><strong>Uncertainty:</strong> most figures are modelled estimates that depend on assumed PUE, grid carbon intensity, and water intensity. Ranges are reported only where the source reports them.</li>
           <li><strong>Comparability:</strong> figures from different studies, vendors, and years are compared only when boundaries and assumptions match. Otherwise the cell reads Not established.</li>
-          <li><strong>Verification status:</strong> this prototype was written without re-checking the live pages. Confirm every URL, identifier, and figure against the original before publication.</li>
+          <li><strong>Verification status:</strong> the linked publications and the cited figures were checked on 14 October 2026: Li et al. abstract and water-footprint method; Patterson et al. Table 4; Elsworth et al. Table 2; Luccioni et al. Table 2; and the official UN and DOE pages. This is source verification, not independent measurement or peer review.</li>
         </ul>
+        <p><strong>Definitions:</strong> water withdrawal is water removed from a source; consumption is the portion not returned for immediate reuse, including evaporation. Direct use occurs at the facility; indirect use can occur in electricity generation (<a class="underline" href={SOURCES.li2023.url}>Li et al.</a>).</p>
+        <p><strong>Conversions:</strong> the text-serving energy converts watt-hours to kilowatt-hours; image energy divides the benchmark batch mean by its query count. These unit conversions do not make different study boundaries comparable.</p>
+        <p><strong>How to cite this page:</strong> Get Cited project. <cite>The Environmental Architecture of Generative AI: Carbon and Water Resource Management.</cite> Published 14 October 2026. <a class="underline break-all" href={canonical}>{canonical}</a>. Cite the original paper as well when using a numerical result.</p>
+        <p><strong>Corrections:</strong> <a class="underline" href="/contact/">report an error with the claim, original source, and suggested correction</a>. <a class="underline" href="/about/">Read the editorial policy</a>.</p>
       </div>
     </section>
   </main>
