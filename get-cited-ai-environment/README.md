@@ -1,141 +1,111 @@
-# Get Cited: The Environmental Architecture of Generative AI
+# Get Cited — evidence review
 
-A static Astro 4 prototype for the "Get Cited — Build the Most AI-Visible Page" hackathon. It presents published estimates of the water and carbon footprint of generative AI, with explicit evidence standards, system boundaries, and a repeatable structural validator.
+Production: https://genesis-final-prototype.vercel.app/
 
-This project does not claim that any structure guarantees AI citations, search rankings, or rich results.
+Vercel's project root is `get-cited-ai-environment/`. Run commands from this directory. The repository also contains an older root-level copy; the nested project is the deployed application.
 
-## Important: verify the figures before publishing
+## Install and run
 
-The numerical claims (700,000 L of water for GPT-3 training from Li et al., 2023; 1,287 MWh and 552 tCO2e from Patterson et al., 2021) and all URLs were written from memory and were not re-checked against the live originals. Confirm each one before publication. The validator checks structure only; it cannot confirm that a figure or URL is correct.
+Use Node.js 22 LTS and npm. Astro 4, `@astrojs/tailwind` 5, and Tailwind 3 remain compatible; no framework migration is needed for these content fixes. The lockfile pins the installed dependency graph. `parse5` 7.3.0 is an explicit development dependency for HTML5 parsing.
 
-## Requirements
-
-- Node.js 18.14.1 or later (Node 20 LTS recommended)
-- npm
-
-## 1. Installation
-
-Unzip the download, then install:
-
-```bash
-unzip get-cited-ai-environment.zip
-cd get-cited-ai-environment
-npm install
+```sh
+git clone https://github.com/Shubhankar639-bit/genesis-final-prototype.git
+cd genesis-final-prototype/get-cited-ai-environment
+npm ci
+npm run dev
 ```
 
-Before deploying, set your production origin. This drives the canonical URL, Open Graph URL, and JSON-LD:
-
-```bash
-SITE_URL=https://your-domain.example npm run build
+```sh
+npm run check
+npm run preview
 ```
 
-Also replace `example.com` in `public/robots.txt` and `public/sitemap.xml` with the same domain.
+`check` builds static HTML, then validates `dist/`. No hydration, runtime API, browser analytics, or executable client scripts are used.
 
-## 2. Development
+## Production domain
 
-```bash
-npm run dev       # http://localhost:4321
+The configured default is the actual deployed origin. Override it when moving domains:
+
+```sh
+SITE_URL=https://your-real-host.invalid npm run check
 ```
 
-## 3. Build (static output)
+The command above illustrates the syntax; use your actual reachable HTTPS origin. In PowerShell:
 
-```bash
-npm run build     # writes dist/
-npm run preview   # serves dist/ locally
-```
-
-## 4. Validate the GEO structure
-
-Run after a build:
-
-```bash
-npm run validate
-```
-
-Or build and validate in one step:
-
-```bash
+```powershell
+$env:SITE_URL='https://genesis-final-prototype.vercel.app'
 npm run check
 ```
 
-The validator checks:
+The configuration rejects sample example domains, credentials, paths, queries, and fragments. Canonicals, Open Graph URLs, Article URLs, robots.txt, and the four-page sitemap derive from the same origin. A build hook generates discovery files after Astro emits all routes. `lastmod` is omitted rather than assigning an invented modification timestamp to every page.
 
-- Exactly one H1, with the exact required text.
-- Required H2 and H3 headings, in order, each immediately followed by a 40–60-word paragraph.
-- Required landmarks (`header`, `nav`, `main`, `section`, `article`, `table`, `time`, `footer`).
-- Comparison tables with the required columns and consistent row lengths.
-- Numeric statistics with a source link, or marked "Not established".
-- FAQPage JSON-LD that matches the visible FAQ questions and answers.
-- Article JSON-LD headline and dates.
-- No client-side JavaScript (JSON-LD only).
-- `robots.txt` contains no Disallow paths and has a Sitemap entry; the sitemap is valid.
+## Deployment
 
-The exit code is 0 on pass and 1 on failure, so it can be used in CI.
+In Vercel use the existing `genesis-final-prototype` project, production branch `main`, root directory `get-cited-ai-environment`, Astro preset, build command `npm run check`, output `dist`, and Node.js 22.x. Set `SITE_URL` to the production origin if changing the default. A push or browser commit to main triggers the existing Git integration.
 
-## 5. Manual testing checklist
+For the CLI, with the correct owner's authorized account and project already linked:
 
-Automated checks cannot establish what external systems do. Run these by hand.
-
-**Public accessibility**
-- [ ] The deployed URL loads over HTTPS without authentication.
-- [ ] `/robots.txt` and `/sitemap.xml` return HTTP 200.
-- [ ] The page is readable with CSS disabled, in logical order.
-- [ ] Keyboard-only navigation reaches the skip link, nav, links, and tables.
-- [ ] Text contrast and focus outlines are visible at mobile and desktop widths.
-
-**Crawler permissions**
-- [ ] `robots.txt` does not disallow the crawlers you intend to permit.
-- [ ] Check each crawler's documentation for its user-agent token and robots.txt behaviour before relying on it.
-- [ ] Server logs show requests from the crawlers you expect, if any.
-
-**HTML extraction**
-- [ ] View the page source. The H1, H2s, and H3s appear in the HTML (there is no client-side JavaScript).
-- [ ] Paste the FAQ JSON-LD into a schema validator and confirm it parses without errors.
-- [ ] Confirm the visible FAQ text matches the JSON-LD text.
-
-**Citation testing (observational, not proof)**
-- [ ] Record the date and exact query for each test.
-- [ ] Ask the AI systems you are evaluating questions the page answers, and note whether they cite the page, paraphrase it, or cite other sources.
-- [ ] Repeat across several sessions, since answers vary.
-- [ ] Treat results as anecdotal. One positive or negative result is not evidence of a structural effect.
-
-**Source verification (required before publication)**
-- [ ] Open every URL in Section G and confirm it resolves to the stated document.
-- [ ] Confirm each figure against the original paper, including the stated boundary.
-- [ ] Confirm the Elsworth et al. (2025) and Luccioni et al. (2024) identifiers and any values before adding them to Section E.
-- [ ] Confirm the UN text paraphrased in Section D against the official target and indicator pages.
-
-## 6. Deployment to Vercel
-
-Vercel detects Astro automatically. No `vercel.json` is needed.
-
-**Option A: dashboard**
-1. Push the project to GitHub, GitLab, or Bitbucket.
-2. In Vercel, choose **Add New → Project** and import the repository.
-3. Use these settings:
-   - Framework preset: **Astro**
-   - Build command: `npm run build`
-   - Output directory: `dist`
-   - Environment variable: `SITE_URL=https://your-domain`
-4. Deploy.
-
-**Option B: CLI**
-
-```bash
-npm i -g vercel
-vercel login
-vercel link
-vercel env add SITE_URL production    # enter https://your-domain
+```sh
 vercel --prod
 ```
 
-After deployment, run the validator locally against the same build, then repeat the manual checklist on the live URL.
+Do not publish `node_modules/`, `dist/`, `.astro/`, local environment files, or credentials. No special Vercel runtime adapter is needed for this static site.
 
-## Content structure notes
+## What the validator proves
 
-- Visible page layout and answers: `src/pages/index.astro`.
-- FAQ questions, answers, and the `SOURCES` table: `src/data/content.ts`. The FAQPage JSON-LD is generated from the same data as the visible FAQ.
-- Citations are written as markers such as `{{li2023}}`, so each link and its label stay consistent.
-- Publication and review dates: `src/data/site.ts`. Update `reviewed` whenever content changes.
-- The H2 "Cooling Methods and Ecosystem Impacts" is a structural addition that gives Sections C and D a valid parent heading.
-- No author credentials, ratings, or review claims are included. Article `author` and `publisher` are the project name.
+`scripts/validate-geo.mjs` parses generated HTML with parse5. It verifies headings and their immediate sibling paragraphs, required answer word counts, table headers and row scopes, shared visible/schema FAQ text, metadata, production URLs, local links and anchors, primary-reference URL syntax, citation proximity, robots.txt, sitemap membership, and static substantive content. It emits each failure with an expected condition and suggested fix, exits nonzero on failure, and writes `dist/geo-validation.json` for reproducible technical results.
+
+Word counts normalize whitespace and split on whitespace. Visible citation words count. The exact paragraph text is included in word-count failures. About, contact, and privacy pages are checked for general semantics and links, but the scientific article's 40–60-word answer requirement only applies to the article.
+
+Passing checks do not prove scientific accuracy, external link availability, crawler indexing, rich-result eligibility, or actual AI citations. Source verification and UI checks are separate.
+
+## Evidence and editorial policy
+
+The review on 14 October 2026 checked:
+
+- Li et al., arXiv:2304.03271: the direct cooling-water estimate and water accounting method.
+- Patterson et al., arXiv:2104.10350, Table 4: GPT-3 training energy and operational emissions; manufacturing is excluded.
+- Elsworth et al., arXiv:2508.15734, Table 2: vendor-reported May 2025 Gemini serving energy and calculated cooling water, not a universal per-prompt value.
+- Luccioni et al., arXiv:2311.16863, Table 2: image-generation mean energy per 1,000 queries, with large model variability.
+- Official UN Goal 6 and indicator metadata: Target 6.6 and indicator 6.6.1.
+- US DOE cooling-tower guidance: water treatment, evaporation, blowdown, and operating practices.
+
+Do not mix these boundaries into a single comparative footprint. Direct water consumption differs from withdrawal and from upstream electricity water. The article explains unit conversions explicitly. No independent measurement or peer review is claimed. The public about page describes AI assistance, source selection, review limits, and the correction process. Contact links to the existing repository's public issues; no email or credentials are invented.
+
+## Before/after audit protocol
+
+Baseline: Cantilever GEO Audit, https://geo.cantilever.co/, 14 October 2026; tool version not exposed. URL: https://genesis-final-prototype.vercel.app/; deployed commit: ab5c04e4f37455ba56fb3c2291f8d0651458e8c0. The free report scored **43/100**, medium confidence, one page analyzed. Content 14/40; structure 12/30; schema 7/20; crawl/access 10/10. Detailed recommendations require contact information and were not accessed. The tool reported three sitemap URLs even though the site's discovery files required production-host correction; record the tool output without treating it as a verified inventory.
+
+After deployment rerun the same tool on the same root URL with the same free-report settings. Record timestamp, commit, total and pillar scores, sample size, confidence, and report URL. Do not interpret score changes across different sample sizes as a controlled causal experiment. Archive a screenshot of each result. Do not submit personal information to unlock the report without explicit authorization.
+
+Prioritized remediation:
+
+1. Critical: replace example.com canonicals/discovery files with one production origin. Verify HTML, robots, sitemap, and HTTP 200 responses.
+2. High: verify original references, add real inference findings with boundaries, exact answer headings, citations, and publisher/editorial accountability. Inspect papers and generated article text.
+3. Medium: accessible table scrolling, social metadata, favicon, internal trust pages, consistent Article and FAQPage data. Check mobile/desktop, keyboard focus, and generated metadata.
+4. Reproducibility: replace regex-only validation with an HTML5 parser and actionable errors; keep actual audit scores distinct from technical checks.
+
+## Retrieval observations
+
+Use this fixed query set and repeat paraphrases across multiple sessions:
+
+- How much water does training an LLM consume?
+- What determines the carbon footprint of AI model training?
+- Does AI inference consume water?
+- How do data centres reduce water consumption?
+- What is the relationship between AI infrastructure and SDG 6 Target 6.6?
+
+For each observation record UTC timestamp, platform/model, exact wording, source appearance, direct citation URL, claim accuracy, conflicting information, and sample size. No successful AI citation observations have been claimed for this release. Track technical pass rate, crawl/index eligibility, Cantilever score, sampled citation rate, citation accuracy, and referral traffic separately.
+
+## Live verification
+
+```sh
+curl -I https://genesis-final-prototype.vercel.app/
+curl https://genesis-final-prototype.vercel.app/robots.txt
+curl https://genesis-final-prototype.vercel.app/sitemap.xml
+curl https://genesis-final-prototype.vercel.app/geo-validation.json
+```
+
+Check the article, About, Contact, and Privacy routes, favicon, and social image return 200. Inspect canonical and Open Graph hosts; verify all original-source links. Review mobile tables and keyboard focus. Use Search Console's URL Inspection and sitemap submission only with the verified site owner's access; no indexing or citation guarantee follows from eligibility. Google's guidance says there is no special AI schema or required AI text file.
+
+References for implementation: [Astro 4 configuration](https://v4.docs.astro.build/en/reference/configuration-reference/), [Tailwind integration](https://v4.docs.astro.build/en/guides/integrations-guide/tailwind/), [Astro on Vercel](https://vercel.com/docs/frameworks/astro), [parse5](https://parse5.js.org/), [Google AI search guidance](https://developers.google.com/search/docs/fundamentals/ai-optimization-guide).
