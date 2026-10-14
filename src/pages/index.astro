@@ -1,0 +1,427 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { SITE } from '../data/site';
+import { FAQS, SOURCES, answerHtml, answerText } from '../data/content';
+
+const headline = 'The Environmental Architecture of Generative AI: Carbon and Water Resource Management';
+const h1 = `${headline}.`;
+const description =
+  'An evidence-first overview of published estimates for the water and carbon footprint of training and running generative AI, with uncertainty, system boundaries, and original sources.';
+const canonical = new URL('/', Astro.site ?? 'https://example.com').href;
+
+const articleLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  headline,
+  description,
+  datePublished: SITE.published,
+  dateModified: SITE.reviewed,
+  inLanguage: 'en',
+  mainEntityOfPage: canonical,
+  author: { '@type': 'Organization', name: SITE.name },
+  publisher: { '@type': 'Organization', name: SITE.name },
+};
+
+const faqLd = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: FAQS.map((f) => ({
+    '@type': 'Question',
+    name: f.question,
+    acceptedAnswer: { '@type': 'Answer', text: answerText(f.answer) },
+  })),
+};
+
+const sourceEntries = Object.entries(SOURCES);
+---
+
+<Layout title={headline} description={description} jsonLd={[articleLd, faqLd]}>
+  <header class="border-b border-slate-200 bg-white">
+    <div class="mx-auto max-w-4xl px-5 py-12 sm:py-16">
+      <p class="text-sm font-semibold uppercase tracking-wide text-blue-800">Get Cited · Evidence-first explainer</p>
+
+      <h1 class="mt-3 text-3xl font-bold leading-tight text-slate-900 sm:text-4xl">{h1}</h1>
+
+      <p class="mt-5 text-lg leading-relaxed text-slate-700">
+        This page summarizes published estimates of the water and carbon footprint of training and running generative AI.
+        It separates measured or modelled figures from gaps in the evidence.
+      </p>
+
+      <div class="mt-8 rounded-lg border border-slate-200 bg-slate-50 p-6">
+        <p class="text-sm font-semibold uppercase tracking-wide text-slate-600">Key findings</p>
+        <ul class="mt-3 list-disc space-y-2 pl-5 text-slate-800">
+          <li>
+            One widely cited academic estimate puts GPT-3 training at about 700,000 litres of water
+            (<a class="text-blue-800 underline" href={SOURCES.li2023.url}>Li et al., 2023</a>).
+          </li>
+          <li>
+            A separate estimate puts GPT-3 training at about 552 tonnes CO2e
+            (<a class="text-blue-800 underline" href={SOURCES.patterson2021.url}>Patterson et al., 2021</a>).
+          </li>
+          <li>Water and carbon results depend heavily on location, cooling design, and electricity mix.</li>
+          <li>Per-query figures for search, text, and image generation are not established on a common basis.</li>
+        </ul>
+        <p class="mt-5 text-sm text-slate-700">
+          <strong class="font-semibold text-slate-900">Evidence standards:</strong>
+          every numerical claim links to its original source, units and system boundaries are stated, and values that cannot be
+          verified are labelled <em>Not established</em>.
+        </p>
+      </div>
+
+      <dl class="mt-8 grid gap-4 text-sm sm:grid-cols-2">
+        <div>
+          <dt class="font-medium text-slate-600">Publication date</dt>
+          <dd><time datetime={SITE.published}>14 October 2026</time></dd>
+        </div>
+        <div>
+          <dt class="font-medium text-slate-600">Last reviewed</dt>
+          <dd><time datetime={SITE.reviewed}>14 October 2026</time></dd>
+        </div>
+      </dl>
+
+      <p class="mt-6 rounded-md border-l-4 border-blue-800 bg-blue-50 p-4 text-sm leading-relaxed text-slate-800">
+        <strong class="font-semibold">Notice:</strong>
+        Environmental impacts vary by model, hardware, workload, location, and electricity source. The figures below describe
+        specific published studies and should not be read as measurements of any particular service.
+      </p>
+
+      <nav aria-label="On this page" class="mt-8">
+        <ul class="flex flex-wrap gap-x-5 gap-y-2 text-sm font-medium text-blue-800">
+          <li><a class="underline" href="#section-a-training-water">A. Training water</a></li>
+          <li><a class="underline" href="#section-b-training-carbon">B. Training carbon</a></li>
+          <li><a class="underline" href="#cooling-methods-ecosystems">C–D. Cooling and ecosystems</a></li>
+          <li><a class="underline" href="#section-e-resource-comparison">E. Comparison</a></li>
+          <li><a class="underline" href="#section-f-faq">F. FAQ</a></li>
+          <li><a class="underline" href="#section-g-sources">G. Sources and methods</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main-content" class="mx-auto max-w-4xl px-5 pb-20">
+    <!-- SECTION A -->
+    <section id="section-a-training-water" class="pt-14">
+      <h2 class="scroll-mt-8 text-2xl font-bold text-slate-900 sm:text-3xl">Section A: How much water does training an LLM consume?</h2>
+      <p class="mt-4 text-lg leading-relaxed text-slate-800">
+        There is no single figure for every model. One widely cited academic estimate attributes roughly 700,000 litres of
+        freshwater to training GPT-3 in Microsoft's US data centres, mostly for cooling (<a class="text-blue-800 underline" href={SOURCES.li2023.url}>Li et al., 2023</a>).
+        Totals depend on hardware, cooling design, climate, and the electricity mix, so results vary by model, location, and method.
+      </p>
+
+      <div class="mt-8 grid gap-4 md:grid-cols-3">
+        <article class="rounded-lg border border-slate-200 bg-white p-5">
+          <p class="text-sm font-medium text-slate-600">Water consumed</p>
+          <p class="mt-2 text-2xl font-bold text-slate-900">About 700,000 litres</p>
+          <p class="mt-2 text-sm text-slate-700">
+            Modelled estimate for GPT-3 training (<a class="text-blue-800 underline" href={SOURCES.li2023.url}>Li et al., 2023</a>).
+          </p>
+        </article>
+        <article class="rounded-lg border border-slate-200 bg-white p-5">
+          <p class="text-sm font-medium text-slate-600">Measurement boundary</p>
+          <p class="mt-2 text-lg font-semibold text-slate-900">Modelled training-run cooling water</p>
+          <p class="mt-2 text-sm text-slate-700">
+            Check the paper for exactly which water categories the headline figure includes (<a class="text-blue-800 underline" href={SOURCES.li2023.url}>Li et al., 2023</a>).
+          </p>
+        </article>
+        <article class="rounded-lg border border-slate-200 bg-white p-5">
+          <p class="text-sm font-medium text-slate-600">Geographic and operational context</p>
+          <p class="mt-2 text-lg font-semibold text-slate-900">Tied to specific US sites</p>
+          <p class="mt-2 text-sm text-slate-700">
+            The estimate reflects one operator's facilities. Water intensity varies with climate and cooling method.
+          </p>
+        </article>
+      </div>
+
+      <p class="mt-8 font-semibold text-slate-900">Direct (onsite) versus indirect (offsite) water</p>
+      <ul class="mt-3 list-disc space-y-2 pl-5 text-slate-800">
+        <li><strong>Direct water:</strong> consumed at the data centre, mainly evaporated in cooling towers and evaporative systems.</li>
+        <li><strong>Indirect water:</strong> consumed at power plants that generate the electricity running the hardware. The amount depends on the generation mix.</li>
+      </ul>
+
+      <p class="mt-6 rounded-md bg-slate-50 p-4 text-slate-800">
+        <strong class="font-semibold text-slate-900">Training versus inference:</strong>
+        Training is a one-off process for each model version, and most published water figures refer to it.
+        Inference runs for every user request, so its cumulative footprint differs in kind. Per-request measurements are sparse (see Section F).
+      </p>
+    </section>
+
+    <!-- SECTION B -->
+    <section id="section-b-training-carbon" class="pt-14">
+      <h2 class="scroll-mt-8 text-2xl font-bold text-slate-900 sm:text-3xl">Section B: What is the carbon footprint of AI model training?</h2>
+      <p class="mt-4 text-lg leading-relaxed text-slate-800">
+        Training a large model consumes substantial electricity, and resulting emissions depend on the grid that powers it.
+        For GPT-3, a 2021 analysis estimated about 1,287 MWh of electricity and roughly 552 tonnes of CO2-equivalent (<a class="text-blue-800 underline" href={SOURCES.patterson2021.url}>Patterson et al., 2021</a>).
+        These figures cover training only, not inference or hardware manufacturing.
+      </p>
+
+      <div class="mt-8 grid gap-4 md:grid-cols-3">
+        <article class="rounded-lg border border-slate-200 bg-white p-5">
+          <p class="text-sm font-medium text-slate-600">Energy consumption</p>
+          <p class="mt-2 text-2xl font-bold text-slate-900">About 1,287 MWh</p>
+          <p class="mt-2 text-sm text-slate-700">
+            Estimated electricity for GPT-3 training (<a class="text-blue-800 underline" href={SOURCES.patterson2021.url}>Patterson et al., 2021</a>).
+          </p>
+        </article>
+        <article class="rounded-lg border border-slate-200 bg-white p-5">
+          <p class="text-sm font-medium text-slate-600">Estimated emissions</p>
+          <p class="mt-2 text-2xl font-bold text-slate-900">About 552 tonnes CO2e</p>
+          <p class="mt-2 text-sm text-slate-700">
+            Depends on the grid carbon intensity assumed (<a class="text-blue-800 underline" href={SOURCES.patterson2021.url}>Patterson et al., 2021</a>).
+          </p>
+        </article>
+        <article class="rounded-lg border border-slate-200 bg-white p-5">
+          <p class="text-sm font-medium text-slate-600">Measurement scope</p>
+          <p class="mt-2 text-lg font-semibold text-slate-900">Training run only</p>
+          <p class="mt-2 text-sm text-slate-700">Excludes inference and hardware manufacturing. Not comparable with per-query figures.</p>
+        </article>
+      </div>
+
+      <p class="mt-8 text-slate-800">
+        CO2 means carbon dioxide alone. CO2e (CO2-equivalent) converts other greenhouse gases, such as methane and nitrous oxide,
+        into the amount of CO2 with the same warming effect over a stated time horizon.
+      </p>
+
+      <p class="mt-6 font-semibold text-slate-900">Major factors affecting emissions</p>
+      <ul class="mt-3 list-disc space-y-2 pl-5 text-slate-800">
+        <li>Carbon intensity of the local electricity grid, including its variation over time of day.</li>
+        <li>Hardware efficiency and how fully it is utilized.</li>
+        <li>Training duration and model size.</li>
+        <li>Data-centre overheads, often summarized as power usage effectiveness (PUE).</li>
+        <li>Assumptions about hardware manufacturing and equipment lifetime.</li>
+      </ul>
+
+      <dl class="mt-8 space-y-4 text-slate-800">
+        <div class="rounded-lg border border-slate-200 p-4">
+          <dt class="font-semibold text-slate-900">Training</dt>
+          <dd class="mt-1">One-off process for each model version. Headline estimates usually refer to this.</dd>
+        </div>
+        <div class="rounded-lg border border-slate-200 p-4">
+          <dt class="font-semibold text-slate-900">Inference</dt>
+          <dd class="mt-1">Repeated for every request. Cumulative emissions depend on usage volume.</dd>
+        </div>
+        <div class="rounded-lg border border-slate-200 p-4">
+          <dt class="font-semibold text-slate-900">Hardware manufacturing</dt>
+          <dd class="mt-1">
+            Emissions from producing chips and servers. Usually spread over the equipment's lifetime and often outside headline training figures.
+          </dd>
+        </div>
+      </dl>
+    </section>
+
+    <!-- GROUPING H2 (structural addition so Sections C and D have a valid parent heading) -->
+    <section id="cooling-methods-ecosystems" class="pt-14">
+      <h2 class="scroll-mt-8 text-2xl font-bold text-slate-900 sm:text-3xl">Cooling Methods and Ecosystem Impacts</h2>
+      <p class="mt-4 text-lg leading-relaxed text-slate-800">
+        This group covers how facilities cool hardware and how water withdrawals can affect freshwater ecosystems.
+        Cooling choices trade water use against energy use, and ecosystem effects depend on local conditions.
+        The two subsections connect these trade-offs to UN Sustainable Development Goal 6.
+      </p>
+
+      <!-- SECTION C -->
+      <div class="mt-12">
+        <h3 id="section-c-cooling-methods" class="scroll-mt-8 text-xl font-bold text-slate-900 sm:text-2xl">Section C: Evaporative Cooling and Greywater Recycling Methods</h3>
+        <p class="mt-4 text-slate-800">
+          Evaporative cooling uses water to remove heat and is usually the most water-intensive option, while air cooling uses more electricity and little water.
+          Reclaimed water and closed-loop systems reduce freshwater withdrawal, but add treatment, pumping, or energy costs.
+          The right choice depends on local water availability, climate, and electricity prices.
+        </p>
+
+        <p class="mt-6 text-sm text-slate-700">
+          The table compares four approaches qualitatively. Published figures for these methods use incompatible boundaries, so no numeric values are shown.
+        </p>
+
+        <div class="mt-4 overflow-x-auto rounded-lg border border-slate-200">
+          <table id="cooling-comparison-table" class="min-w-full border-collapse text-left text-sm">
+            <caption class="px-4 py-3 text-left text-sm font-medium text-slate-700">
+              Qualitative comparison of cooling and water-reuse methods (trade-offs, not measured values).
+            </caption>
+            <thead class="bg-slate-100 text-slate-900">
+              <tr>
+                <th scope="col" class="px-4 py-3 font-semibold">Method</th>
+                <th scope="col" class="px-4 py-3 font-semibold">Water use</th>
+                <th scope="col" class="px-4 py-3 font-semibold">Energy requirement</th>
+                <th scope="col" class="px-4 py-3 font-semibold">Water availability needed</th>
+                <th scope="col" class="px-4 py-3 font-semibold">Operational constraints</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-200 align-top text-slate-800">
+              <tr>
+                <th scope="row" class="px-4 py-3 font-semibold text-slate-900">Evaporative cooling</th>
+                <td class="px-4 py-3">High; water is evaporated at the site</td>
+                <td class="px-4 py-3">Lower</td>
+                <td class="px-4 py-3">Reliable local supply required</td>
+                <td class="px-4 py-3">Water treatment, scaling, and high demand in dry climates</td>
+              </tr>
+              <tr>
+                <th scope="row" class="px-4 py-3 font-semibold text-slate-900">Air cooling</th>
+                <td class="px-4 py-3">Low</td>
+                <td class="px-4 py-3">Higher; fans and, in hot climates, mechanical chillers</td>
+                <td class="px-4 py-3">Least dependent on water supply</td>
+                <td class="px-4 py-3">Capacity limits in hot or humid conditions; noise</td>
+              </tr>
+              <tr>
+                <th scope="row" class="px-4 py-3 font-semibold text-slate-900">Reclaimed water</th>
+                <td class="px-4 py-3">Lower freshwater withdrawal; water is still consumed onsite</td>
+                <td class="px-4 py-3">Moderate; treatment and pumping</td>
+                <td class="px-4 py-3">Nearby wastewater supply required</td>
+                <td class="px-4 py-3">Treatment infrastructure, water-quality controls, and permitting</td>
+              </tr>
+              <tr>
+                <th scope="row" class="px-4 py-3 font-semibold text-slate-900">Closed-loop cooling</th>
+                <td class="px-4 py-3">Low make-up water, with some losses</td>
+                <td class="px-4 py-3">Higher; heat rejection requires energy</td>
+                <td class="px-4 py-3">Low</td>
+                <td class="px-4 py-3">Higher upfront cost; sensitive to climate; needs heat-rejection capacity</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- SECTION D -->
+      <div class="mt-14">
+        <h3 id="section-d-hardware-sdg6" class="scroll-mt-8 text-xl font-bold text-slate-900 sm:text-2xl">Section D: AI Hardware Demands and Sustainable Development Goal 6 Target 6.6</h3>
+        <p class="mt-4 text-slate-800">
+          AI data centres can affect freshwater ecosystems through water withdrawal from rivers and aquifers, thermal discharge, and use in water-stressed basins.
+          Evaluating this against SDG 6 Target 6.6 requires local measurements of water-related ecosystems, not only corporate totals.
+          Impacts depend strongly on siting and local water scarcity.
+        </p>
+
+        <p class="mt-6 text-slate-800">
+          Target 6.6 calls for protecting and restoring water-related ecosystems such as wetlands, rivers, aquifers, and lakes (<a class="text-blue-800 underline" href={SOURCES.unSdg6.url}>UN SDG 6</a>).
+          Its official indicator, 6.6.1, tracks change in the extent of these ecosystems over time (<a class="text-blue-800 underline" href={SOURCES.unIndicator661.url}>UN SDG indicator 6.6.1</a>).
+          Progress is therefore assessed through the indicator rather than through corporate water totals.
+        </p>
+
+        <p class="mt-6 font-semibold text-slate-900">Pathways by which AI infrastructure can matter for freshwater</p>
+        <ul class="mt-3 list-disc space-y-2 pl-5 text-slate-800">
+          <li>Withdrawals from rivers, lakes, and aquifers in basins with limited supply.</li>
+          <li>Thermal discharge that changes the temperature of receiving waters.</li>
+          <li>Land and wetland changes from facility and power infrastructure.</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- SECTION E -->
+    <section id="section-e-resource-comparison" class="pt-14">
+      <h2 class="scroll-mt-8 text-2xl font-bold text-slate-900 sm:text-3xl">Section E: Resource consumption comparison</h2>
+      <p class="mt-4 text-lg leading-relaxed text-slate-800">
+        Per-query and training figures for web search, text generation, and image generation are not directly comparable.
+        Reliable, consistent energy and water measurements for all three tasks under one boundary are unavailable, so most cells are marked Not established.
+        Where a figure appears, read it with the assumptions stated in its row.
+      </p>
+
+      <div class="mt-8 overflow-x-auto rounded-lg border border-slate-200">
+        <table id="resource-comparison-table" class="min-w-full border-collapse text-left text-sm">
+          <caption class="px-4 py-3 text-left text-sm font-medium text-slate-700">
+            Per-query task measurements. These are not training totals (Sections A and B) and must not be added to or compared directly with them.
+          </caption>
+          <thead class="bg-slate-100 text-slate-900">
+            <tr>
+              <th scope="col" class="px-4 py-3 font-semibold">Task and assumptions</th>
+              <th scope="col" class="px-4 py-3 font-semibold">Energy consumption (kWh)</th>
+              <th scope="col" class="px-4 py-3 font-semibold">Water consumption (millilitres)</th>
+              <th scope="col" class="px-4 py-3 font-semibold">System boundary</th>
+              <th scope="col" class="px-4 py-3 font-semibold">Source</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-200 align-top text-slate-800">
+            <tr>
+              <th scope="row" class="px-4 py-3 text-left">
+                <span class="font-semibold text-slate-900">Standard web search</span><br />
+                <span class="font-normal">A single keyword query returning ranked links. Hardware and data-centre assumptions are not standardized.</span>
+              </th>
+              <td class="px-4 py-3">Not established</td>
+              <td class="px-4 py-3">Not established</td>
+              <td class="px-4 py-3">Not established. No comparable boundary was reviewed.</td>
+              <td class="px-4 py-3">Not established. No primary source reviewed for this prototype.</td>
+            </tr>
+            <tr>
+              <th scope="row" class="px-4 py-3 text-left">
+                <span class="font-semibold text-slate-900">Generative text</span><br />
+                <span class="font-normal">A single text prompt. Model, prompt length, and output length vary by study.</span>
+              </th>
+              <td class="px-4 py-3">Not established. Vendor-reported figures exist for one model but are not independently verified or comparable.</td>
+              <td class="px-4 py-3">Not established. Same limitation as energy.</td>
+              <td class="px-4 py-3">Vendor-defined; differs from academic boundaries.</td>
+              <td class="px-4 py-3"><a class="text-blue-800 underline" href={SOURCES.elsworth2025.url}>Elsworth et al., 2025</a> (vendor preprint; verify figures before use)</td>
+            </tr>
+            <tr>
+              <th scope="row" class="px-4 py-3 text-left">
+                <span class="font-semibold text-slate-900">Image generation</span><br />
+                <span class="font-normal">A single image. Model, resolution, and sampling steps vary.</span>
+              </th>
+              <td class="px-4 py-3">Not established in this prototype. A consistent per-task comparison exists; values have not been transcribed.</td>
+              <td class="px-4 py-3">Not established. Water is not reported in this source.</td>
+              <td class="px-4 py-3">Not established in this prototype.</td>
+              <td class="px-4 py-3"><a class="text-blue-800 underline" href={SOURCES.luccioni2024.url}>Luccioni et al., 2024</a> (per-task energy comparison; verify values before use)</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- SECTION F -->
+    <section id="section-f-faq" class="pt-14">
+      <h2 class="scroll-mt-8 text-2xl font-bold text-slate-900 sm:text-3xl">Section F: Frequently asked questions</h2>
+      <p class="mt-4 text-lg leading-relaxed text-slate-800">
+        These questions summarize the main article. Each answer matches the cited evidence in the sections above, and figures are linked to their original sources in Section G.
+        Where evidence is limited, the answers say so instead of guessing. Readers should check local conditions before drawing conclusions.
+      </p>
+
+      <div class="mt-8 space-y-10">
+        {
+          FAQS.map((f) => (
+            <section id={f.id} class="border-t border-slate-200 pt-8">
+              <h3 class="text-xl font-semibold text-slate-900">{f.question}</h3>
+              <p class="mt-3 leading-relaxed text-slate-800" set:html={answerHtml(f.answer)} />
+            </section>
+          ))
+        }
+      </div>
+    </section>
+
+    <!-- SECTION G -->
+    <section id="section-g-sources" class="pt-14">
+      <h2 class="scroll-mt-8 text-2xl font-bold text-slate-900 sm:text-3xl">Section G: Sources and methodology</h2>
+      <p class="mt-4 text-lg leading-relaxed text-slate-800">
+        This section lists the original sources behind every numerical claim. Priority goes to peer-reviewed or preprint research,
+        government and intergovernmental bodies, and transparent technical reports. Vendor and preprint figures are marked, and the methodology note explains units, boundaries, uncertainty, and comparability.
+      </p>
+
+      <ol class="mt-8 list-decimal space-y-5 pl-5 text-slate-800">
+        {
+          sourceEntries.map(([key, s]) => (
+            <li id={`src-${key}`}>
+              <span class="font-semibold text-slate-900">{s.title}.</span>
+              {s.authors ? <span> {s.authors}.</span> : null}
+              <span> {s.publisher}. Date: {s.date}. Type: {s.kind}.</span>
+              <br />
+              <a class="break-all text-blue-800 underline" href={s.url}>{s.url}</a>
+            </li>
+          ))
+        }
+      </ol>
+
+      <div class="mt-12 space-y-4 text-slate-800">
+        <p class="font-semibold text-slate-900">Methodology note</p>
+        <ul class="list-disc space-y-3 pl-5">
+          <li><strong>Units:</strong> energy in kWh or MWh, emissions in tonnes CO2-equivalent (tCO2e), water in litres (L) or millilitres (mL). Values are converted only when the conversion is stated.</li>
+          <li><strong>System boundaries:</strong> each figure states what it includes. Training totals, per-query measurements, and hardware manufacturing are not additive or interchangeable.</li>
+          <li><strong>Uncertainty:</strong> most figures are modelled estimates that depend on assumed PUE, grid carbon intensity, and water intensity. Ranges are reported only where the source reports them.</li>
+          <li><strong>Comparability:</strong> figures from different studies, vendors, and years are compared only when boundaries and assumptions match. Otherwise the cell reads Not established.</li>
+          <li><strong>Verification status:</strong> this prototype was written without re-checking the live pages. Confirm every URL, identifier, and figure against the original before publication.</li>
+        </ul>
+      </div>
+    </section>
+  </main>
+
+  <footer class="border-t border-slate-200 bg-slate-50">
+    <div class="mx-auto max-w-4xl px-5 py-8 text-sm text-slate-700">
+      <p>
+        Get Cited hackathon prototype. Not affiliated with any organization named on this page.
+        Content reflects published estimates and may be superseded by newer research.
+      </p>
+    </div>
+  </footer>
+</Layout>

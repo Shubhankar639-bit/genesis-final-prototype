@@ -1,0 +1,74 @@
+---
+interface Props {
+  title: string;
+  description: string;
+  jsonLd?: Record<string, unknown>[];
+}
+
+const { title, description, jsonLd = [] } = Astro.props;
+const canonical = new URL('/', Astro.site ?? 'https://example.com').href;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta name="robots" content="index, follow" />
+    <link rel="canonical" href={canonical} />
+
+    <meta property="og:type" content="article" />
+    <meta property="og:site_name" content="Get Cited" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:locale" content="en_US" />
+
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+
+    {
+      jsonLd.map((data) => (
+        <script type="application/ld+json" set:html={JSON.stringify(data).replace(/</g, '\\u003c')} />
+      ))
+    }
+
+    <style is:global>
+      .skip-link {
+        position: absolute;
+        left: -9999px;
+        top: auto;
+        width: 1px;
+        height: 1px;
+        overflow: hidden;
+      }
+      .skip-link:focus {
+        left: 1rem;
+        top: 1rem;
+        width: auto;
+        height: auto;
+        overflow: visible;
+        z-index: 50;
+        background: #ffffff;
+        color: #1e293b;
+        padding: 0.5rem 1rem;
+        border: 2px solid #1e40af;
+        border-radius: 0.375rem;
+      }
+      :focus-visible {
+        outline: 3px solid #1e40af;
+        outline-offset: 2px;
+      }
+      a {
+        text-underline-offset: 0.2em;
+      }
+    </style>
+  </head>
+  <body class="min-h-screen bg-white font-sans text-slate-800 antialiased">
+    <a class="skip-link" href="#main-content">Skip to main content</a>
+    <slot />
+  </body>
+</html>
