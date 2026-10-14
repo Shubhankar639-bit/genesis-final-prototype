@@ -1,19 +1,4 @@
-# Crawl policy for the Get Cited prototype.
-# The page is meant to be crawlable, so no paths are disallowed.
-
 User-agent: *
 Allow: /
 
-User-agent: GPTBot
-Allow: /
-
-User-agent: ClaudeBot
-Allow: /
-
-User-agent: PerplexityBot
-Allow: /
-
-User-agent: Google-Extended
-Allow: /
-
-Sitemap: https://example.com/sitemap.xml
+Sitemap: https://genesis-final-prototype.vercel.app/sitemap.xml
