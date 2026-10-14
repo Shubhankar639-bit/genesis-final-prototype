@@ -6,31 +6,35 @@ export interface Source {
   date: string; // Year, or "Not stated on page"
   kind: string; // Source type, shown in Section G
   url: string;
+  supports?: string;
 }
 
 // Keys are used as inline markers such as {{li2023}} inside answer text.
-// All entries must be re-verified against the original before publication.
+// Source metadata and the cited findings were checked against the original publications on 2026-10-14.
 export const SOURCES: Record<string, Source> = {
   li2023: {
+    supports: "Section A and FAQ: modeled direct cooling water for GPT-3; consumption versus withdrawal and indirect electricity-related water.",
     short: 'Li et al., 2023',
     title: "Making AI Less 'Thirsty': Uncovering and Addressing the Secret Water Footprint of AI Models",
     authors: 'Pengfei Li, Jianyi Yang, Mohammad A. Islam, Shaolei Ren',
     publisher: 'arXiv (arXiv:2304.03271)',
-    date: '2023',
+    date: '6 April 2023 (first submitted)',
     kind: 'Preprint, academic',
     url: 'https://arxiv.org/abs/2304.03271',
   },
   patterson2021: {
+    supports: "Section B and FAQ: GPT-3 training energy and operational emissions, Table 4; excludes equipment manufacturing.",
     short: 'Patterson et al., 2021',
     title: 'Carbon Emissions and Large Neural Network Training',
     authors:
       'David Patterson, Joseph Gonzalez, Quoc Le, Chen Liang, Lluis-Miquel Munguia, Daniel Rothchild, David So, Maud Texier, Jeff Dean',
     publisher: 'arXiv (arXiv:2104.10350)',
-    date: '2021',
+    date: '21 April 2021 (first submitted)',
     kind: 'Preprint, academic',
     url: 'https://arxiv.org/abs/2104.10350',
   },
   luccioni2024: {
+    supports: "Section E: image-generation benchmark energy, Table 2; mean per 1,000 inferences and variability.",
     short: 'Luccioni et al., 2024',
     title: 'Power Hungry Processing: Watts Driving the Cost of AI Deployment?',
     authors: 'Alexandra Sasha Luccioni, Yacine Jernite, Emma Strubell',
@@ -40,15 +44,26 @@ export const SOURCES: Record<string, Source> = {
     url: 'https://arxiv.org/abs/2311.16863',
   },
   elsworth2025: {
+    supports: "Sections C and E: Table 2, May 2025 Gemini Apps median prompt; measured serving energy and estimated cooling water.",
     short: 'Elsworth et al., 2025',
     title: 'Measuring the environmental impact of delivering AI at Google Scale',
-    authors: 'Elsworth et al. (Google)',
+    authors: 'Cooper Elsworth, Keguo Huang, David Patterson, Ian Schneider, Robert Sedivy, Savannah Goodman, Ben Townsend, Parthasarathy Ranganathan, Jeff Dean, Amin Vahdat, Ben Gomes, James Manyika',
     publisher: 'Google; arXiv (arXiv:2508.15734)',
-    date: '2025',
-    kind: 'Vendor technical report (preprint). Verify before use.',
+    date: '21 August 2025',
+    kind: 'Vendor-authored preprint; not an independent audit',
     url: 'https://arxiv.org/abs/2508.15734',
   },
+  doeCooling: {
+    short: 'US DOE, Cooling Tower Management',
+    title: 'Best Management Practice #10: Cooling Tower Management',
+    publisher: 'US Department of Energy, Federal Energy Management Program',
+    date: 'No publication date displayed',
+    kind: 'Official operational guidance',
+    url: 'https://www.energy.gov/cmei/femp/best-management-practice-10-cooling-tower-management',
+    supports: 'Section C: evaporation, blowdown, treatment, maintenance, and alternative make-up water sources.',
+  },
   unSdg6: {
+    supports: "Section D: official wording of Target 6.6 and indicator 6.6.1; not evidence of impacts at a specific data centre.",
     short: 'UN SDG 6',
     title: 'Goal 6: Ensure availability and sustainable management of water and sanitation for all',
     publisher: 'United Nations, Sustainable Development Goals',
@@ -57,6 +72,7 @@ export const SOURCES: Record<string, Source> = {
     url: 'https://sdgs.un.org/goals/goal6',
   },
   unIndicator661: {
+    supports: "Section D: indicator methodology for tracking changes in water-related ecosystems.",
     short: 'UN SDG indicator 6.6.1',
     title: 'SDG indicator metadata (indicator 6.6.1: change in the extent of water-related ecosystems over time)',
     publisher: 'United Nations Statistics Division',
@@ -78,7 +94,7 @@ export const FAQS: Faq[] = [
     id: 'faq-training-water',
     question: 'How much water does training an LLM consume?',
     answer:
-      "Estimates vary by model and location. The most-cited academic figure is about 700,000 litres of freshwater for training GPT-3 in Microsoft's US data centres, mostly for cooling {{li2023}}. Comparable estimates for other models are limited, and totals depend on hardware, climate, and cooling design.",
+      "Estimates vary by model and location. Li et al. model approximately 700,000 litres of freshwater for training GPT-3 in Microsoft's US data centres, mostly for cooling {{li2023}}. Comparable estimates for other models are limited, and totals depend on hardware, climate, and cooling design.",
   },
   {
     id: 'faq-training-carbon',
@@ -90,13 +106,13 @@ export const FAQS: Faq[] = [
     id: 'faq-inference-water',
     question: 'Does AI inference consume water?',
     answer:
-      'Yes. Inference uses water indirectly through electricity generation and directly when data centres use evaporative cooling for the servers running models. Per-request amounts are small, but they repeat across very large volumes of use. Public per-query measurements are sparse and use inconsistent boundaries, so totals remain uncertain.',
+      'Yes. AI inference can consume water through data-centre cooling and electricity generation {{li2023}}. There is no universal per-prompt amount: cooling technology, climate, model workload, and accounting boundaries change the result. Training and inference are different activities, so a training estimate cannot describe the water consumed by a single response.',
   },
   {
     id: 'faq-reduce-impact',
     question: 'How can data centres reduce their environmental impact?',
     answer:
-      'Operators can reduce impact by siting facilities where electricity is low-carbon and water is abundant, improving hardware utilization, raising cooling efficiency, and using reclaimed or closed-loop water where feasible. Transparent, location-specific reporting of both energy and water lets researchers and communities verify progress. Trade-offs between water and energy should be assessed locally.',
+      'Operators can reduce impact by siting facilities where electricity is low-carbon and water is abundant, improving hardware utilization, raising cooling efficiency, and using reclaimed or closed-loop water where feasible. Transparent, location-specific reporting of both energy and water lets researchers and communities verify progress. Assess local water and energy trade-offs {{doeCooling}}.',
   },
 ];
 

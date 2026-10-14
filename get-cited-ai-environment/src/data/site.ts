@@ -1,4 +1,4 @@
-// Site-level metadata. Update the dates whenever the content is re-reviewed.
+// Publication is retained from the existing deployed page. Source review actually performed on this date.
 export const SITE = {
   name: 'Get Cited',
   published: '2026-10-14',
