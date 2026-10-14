@@ -76,7 +76,7 @@ export interface Faq {
 export const FAQS: Faq[] = [
   {
     id: 'faq-training-water',
-    question: 'How much water does training an LLM consume?',
+    question: 'How many litres of water does training an LLM consume?',
     answer:
       "Estimates vary by model and location. The most-cited academic figure is about 700,000 litres of freshwater for training GPT-3 in Microsoft's US data centres, mostly for cooling {{li2023}}. Comparable estimates for other models are limited, and totals depend on hardware, climate, and cooling design.",
   },
@@ -88,7 +88,7 @@ export const FAQS: Faq[] = [
   },
   {
     id: 'faq-inference-water',
-    question: 'Does AI inference consume water?',
+    question: 'How many litres of water does AI inference consume?',
     answer:
       'Yes. Inference uses water indirectly through electricity generation and directly when data centres use evaporative cooling for the servers running models. Per-request amounts are small, but they repeat across very large volumes of use. Public per-query measurements are sparse and use inconsistent boundaries, so totals remain uncertain.',
   },
